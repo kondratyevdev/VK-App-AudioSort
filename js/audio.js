@@ -77,7 +77,8 @@ var Audio = {
   swithAudio: function() {
 
     if(Audio.data.length == 0) {
-      document.getElementById('loading').innerHTML = '&nbsp;&nbsp;Все готово!&nbsp;&nbsp;';
+      Audio.state = 2
+      document.getElementById('loading-button').innerHTML = '&nbsp;&nbsp;Готово :) Перейти в аудиозаписи!&nbsp;&nbsp;'
       return;
     }
     //console.log(Audio.data);
