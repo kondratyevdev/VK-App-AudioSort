@@ -1,3 +1,4 @@
 # VK-App-AudioSort
 
-Приложения для сортировки аудиозаписей ВК
+Simple iFrame Application for VK.com witch helps to sort out your audio by alphabet order
+
