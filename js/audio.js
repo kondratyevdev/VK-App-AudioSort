@@ -78,7 +78,7 @@ var Audio = {
 
     if(Audio.data.length == 0) {
       Audio.state = 2
-      document.getElementById('loading-button').innerHTML = '&nbsp;&nbsp;Готово :) Перейти в аудиозаписи!&nbsp;&nbsp;'
+      document.getElementById('loading-button').innerHTML = Consts.finishString
       return;
     }
     //console.log(Audio.data);
@@ -103,7 +103,7 @@ var Audio = {
 
     if(execute.length == 0) {
       Audio.state = 2
-      document.getElementById('loading-button').innerHTML = '&nbsp;&nbsp;Готово :) Перейти в аудиозаписи!&nbsp;&nbsp;'
+      document.getElementById('loading-button').innerHTML = Consts.finishString
       return;
     }
 
