@@ -1,2 +1,3 @@
-# VK-Apps-AudioSort
+# VK-App-AudioSort
+
 Приложения для сортировки аудиозаписей ВК
