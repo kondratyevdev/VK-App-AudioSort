@@ -34,9 +34,18 @@
               &nbsp;&nbsp;Упорядочить аудиозаписи&nbsp;&nbsp;
             </button>
           </div>
+          <div id="restore-block" style="margin-left: 10px;" class="dev_main_my_link fl_l"></div>
         </div>
       </div>
     </div>
+
+    <script>
+      var unsorted = localStorage.getItem("unsorted_" + Audio.user_id);
+      if(unsorted !== null) {
+        Audio.unsorted = JSON.parse(unsorted);
+        document.getElementById('restore-block').innerHTML = '<a href="#restore" id="restore-button" onclick="Audio.onRestore()">Вернуть все как было</a>';
+      }
+    </script>
 
   </body>
 </html>
