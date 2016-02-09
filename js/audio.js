@@ -11,9 +11,6 @@ var Audio = {
 
   startBefore: 0,
   state: 0,
-  user_id: (location.href.match(/viewer_id=([0-9]+)/) || [])[1],
-
-
   init: function(offset) {
     VK.api('audio.get', {
       count: 100,
@@ -21,12 +18,10 @@ var Audio = {
     }, function(r) {
       var response = r.response;
       if (response.length == 0) {
-        localStorage.setItem("unsorted_" + Audio.user_id, JSON.stringify(Audio.unsorted));
         Audio.sort();
       } else {
         for (var i in response) {
           var audio = response[i];
-          Audio.unsorted.push(audio);
           if (Audio.startBefore == 0) 
             Audio.startBefore = audio.aid;
 
@@ -71,9 +66,41 @@ var Audio = {
     Audio.reorder(sorted_array, 0, function() {
       Audio.state = 2
       document.getElementById('loading-button').innerHTML = Consts.finishString
-      document.getElementById('restore-block').innerHTML = '<a href="#restore" id="restore-button" onclick="Audio.onRestore()">Вернуть все как было</a>';
+      document.getElementById('restore-block').innerHTML = Consts.restore
     });
 
+  },
+
+  restore: function(offset) {
+   VK.api('audio.get', {
+      count: 100,
+      offset: offset * 100
+    }, function(r) {
+      var response = r.response;
+      if (response.length == 0) {
+        Audio.sortById();
+      } else {
+        for (var i in response) {
+          var audio = response[i];
+          Audio.unsorted.push(audio);
+        }
+        setTimeout(function() {
+          Audio.restore(offset + 1);
+        }, 500);
+      }
+    });
+  },
+
+  sortById: function() {
+    Audio.unsorted.sort(function(a, b) {
+      return b.aid - a.aid;
+    });
+
+    Audio.reorder(Audio.unsorted, 0, function(){
+      document.getElementById('restore-block').innerHTML = Consts.ready;
+      Audio.state = 0;
+      document.getElementById('loading-button').innerHTML = Consts.reorder;
+    });
   },
 
   reorder: function(list, offset, cb) {
@@ -112,8 +139,8 @@ var Audio = {
   onClick: function() {
     if (Audio.state == 0) {
       Audio.state = 1
-      document.getElementById('loading-button').innerHTML = '<div id="loading" class="bugs_search_progress" style="display:block; margin: 0; margin: auto; height: 10px"></div>'
-
+      document.getElementById('loading-button').innerHTML = Consts.loading
+      document.getElementById('restore-block').innerHTML = "";
       VK.init(function() {
         Audio.init(0);
       });
@@ -125,17 +152,9 @@ var Audio = {
   },
 
   onRestore: function() {
-    document.getElementById('restore-block').innerHTML = 'Возвращаем..';
-    
+    document.getElementById('restore-block').innerHTML = Consts.restoring;
     Audio.state = 1;
-    document.getElementById('loading-button').innerHTML = '<div id="loading" class="bugs_search_progress" style="display:block; margin: 0; margin: auto; height: 10px"></div>'
-    
-    Audio.reorder(Audio.unsorted, 0, function() {
-      localStorage.removeItem("unsorted_" + Audio.user_id);
-      document.getElementById('restore-block').innerHTML = 'Готово!';
-      
-      Audio.state = 0;
-      document.getElementById('loading-button').innerHTML = '&nbsp;&nbsp;Упорядочить аудиозаписи&nbsp;&nbsp;';
-    });
+    document.getElementById('loading-button').innerHTML = Consts.loading
+    Audio.restore(0);
   }
 }
