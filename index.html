@@ -16,31 +16,44 @@
 
     <script type="text/javascript">
     var Consts = {
-      finishString: "&nbsp;&nbsp;Готово :) Перейти в аудиозаписи!&nbsp;&nbsp;",
+      finishString: "Готово :) Перейти в аудиозаписи!",
       restore: '<a href="#restore" id="restore-button" onclick="Audio.onRestore()">Вернуть все как было</a>',
       restoring: "Возвращаем..",
       loading: '<div id="loading" class="bugs_search_progress" style="display:block; margin: 0; margin: auto; height: 10px"></div>',
       ready: "Готово!",
-      reorder: "&nbsp;&nbsp;Упорядочить аудиозаписи&nbsp;&nbsp;",
+      reorderAbc: "&nbsp;&nbsp;По алфавиту&nbsp;&nbsp;",
+      reorderRandom: "&nbsp;&nbsp;В случайном порядке&nbsp;&nbsp;",
     }
     </script>
 
     <script src="//vk.com/js/api/xd_connection.js?2"; type="text/javascript"></script>
     <script src="js/audio.js?2"; type="text/javascript"></script>
 
-    <div class="dev_page_block main_desc" style="width: 400px;margin-left: auto; margin-right: auto;margin-top: 100px;padding-bottom: 60px">
+    <div class="dev_page_block main_desc" style="width: 400px;margin-left: auto; margin-right: auto;margin-top: 100px;padding-bottom: 75px">
       <div class="dev_main_head">
-        <div class="dev_main_header">Упорядочить аудиозаписи по алфавиту</div>
-        <div class="dev_main_desc">C помощью данного приложения Вы сможете за пару секунд упорядочить все свои аудиозаписи по алфавиту. <br /><br />Данное приложение было написано за 30 минут <b>по дружеской просьбе</b>, но отныне это приложение — <b>общественное достояние.</b><br /><br />Вы можете помочь в его развитии и предложить новые идеи, а так же исправить старые на <a href="//github.com/kondratyevdev/VK-App-AudioSort" target="_blank" /><b>Github</b></a>.<br /><br /></div>
-        
+        <div class="dev_main_header">Упорядочить аудиозаписи</div>
+        <div class="dev_main_desc">C помощью данного приложения Вы сможете за пару секунд упорядочить все свои аудиозаписи по алфавиту или перемешать в случайном порядке. <br /><br />Данное приложение было написано за 30 минут <b>по дружеской просьбе</b>, но отныне это приложение — <b>общественное достояние.</b><br /><br />Вы можете помочь в его развитии и предложить новые идеи, а так же исправить старые на <a href="//github.com/kondratyevdev/VK-App-AudioSort" target="_blank" /><b>Github</b></a>.<br /><br /></div>
+
         <div class="dev_main_buttons clear_fix" style="position: static">
-          <div onclick="Audio.onClick()" class="dev_create_app_btn fl_l">
-            <button class="flat_button" id="loading-button" style="width: 220px; height: 26px;">
-              &nbsp;&nbsp;Упорядочить аудиозаписи&nbsp;&nbsp;
+          <div onclick="Audio.onClick('abc')" class="dev_create_app_btn fl_l">
+            <button class="flat_button" id="loading-button-abc" style="width: 195px;height: 26px;">
+              &nbsp;&nbsp;По алфавиту&nbsp;&nbsp;
             </button>
           </div>
-          <div id="restore-block" style="margin-left: 10px;" class="dev_main_my_link fl_l">
-            <a href="#restore" id="restore-button" onclick="Audio.onRestore()">Вернуть все как было</a>
+          <div onclick="Audio.onClick('random')" class="dev_create_app_btn fl_r">
+            <button class="flat_button" id="loading-button-random" style="width: 195px;height: 26px;">
+              &nbsp;&nbsp;В случайном порядке&nbsp;&nbsp;
+            </button>
+          </div>
+          <div id="footer_wrap" class="fl_r" style="width: 400px;">
+            <div id="audio-block">
+              <a href="https://vk.com/audio" id="audio-button" target="_blank"></a>
+            </div>
+          </div>
+          <div id="footer_wrap" class="fl_r" style="width: 400px;">
+            <div id="restore-block">
+              <a href="#restore" id="restore-button" onclick="Audio.onRestore()">Вернуть все как было</a>
+            </div>
           </div>
         </div>
       </div>
