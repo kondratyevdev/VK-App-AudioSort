@@ -11,18 +11,22 @@ var Audio = {
 
   startBefore: 0,
   state: 0,
-  init: function(offset) {
+  init: function(offset, type) {
     VK.api('audio.get', {
       count: 100,
       offset: offset * 100
     }, function(r) {
       var response = r.response;
       if (response.length == 0) {
-        Audio.sort();
+        if (type == 'random') {
+          Audio.randomSort();
+        } else {
+          Audio.sort();
+        }
       } else {
         for (var i in response) {
           var audio = response[i];
-          if (Audio.startBefore == 0) 
+          if (Audio.startBefore == 0)
             Audio.startBefore = audio.aid;
 
           var key = audio.artist.trim().toLowerCase();
@@ -31,7 +35,7 @@ var Audio = {
           Audio.data[key].push(audio);
         }
         setTimeout(function() {
-          Audio.init(offset + 1);
+          Audio.init(offset + 1, type);
         }, 500);
       }
     });
@@ -64,8 +68,7 @@ var Audio = {
     }
 
     Audio.reorder(sorted_array, 0, function() {
-      Audio.state = 2
-      document.getElementById('loading-button').innerHTML = Consts.finishString
+      Audio.defaultState();
       document.getElementById('restore-block').innerHTML = Consts.restore
     });
 
@@ -91,6 +94,30 @@ var Audio = {
     });
   },
 
+  randomSort: function() {
+    var keys = Object.keys(Audio.data),
+      len = keys.length;
+
+    var audio_array = [];
+    var sorted_array = [];
+
+    for (var i = 0; i < len; i++) {
+      var key = keys[i];
+      var arr = Audio.data[key];
+
+      audio_array = audio_array.concat(arr);
+    }
+
+    sorted_array = audio_array.sort(function(a, b) {
+      return Math.random() > 0.5 ? 1 : -1;
+    });
+
+    Audio.reorder(sorted_array, 0, function() {
+      Audio.defaultState();
+      document.getElementById('restore-block').innerHTML = Consts.restore
+    });
+  },
+
   sortById: function() {
     Audio.unsorted.sort(function(a, b) {
       return b.aid - a.aid;
@@ -98,8 +125,7 @@ var Audio = {
 
     Audio.reorder(Audio.unsorted, 0, function(){
       document.getElementById('restore-block').innerHTML = Consts.ready;
-      Audio.state = 0;
-      document.getElementById('loading-button').innerHTML = Consts.reorder;
+      Audio.defaultState();
     });
   },
 
@@ -109,7 +135,7 @@ var Audio = {
       cb();
       return true;
     }
-    
+
     var execute_list = [];
     var after = list[0].aid;
 
@@ -126,7 +152,7 @@ var Audio = {
     }
 
     var code = 'var arr = [' + execute_list.join(",") + ']; var after = ' + after + '; var i = 0; while(i < arr.length) { API.audio.reorder({aid:arr[i], after: after}); after = arr[i]; i = i + 1; } return 1;';
-  
+
     VK.api('execute', {
       code: code
     }, function(r) {
@@ -136,25 +162,33 @@ var Audio = {
     });
   },
 
-  onClick: function() {
+  defaultState: function() {
+    Audio.state = 0
+    document.getElementById('loading-button-abc').innerHTML = Consts.reorderAbc
+    document.getElementById('loading-button-random').innerHTML = Consts.reorderRandom
+    document.getElementById('audio-button').innerHTML = Consts.finishString
+  },
+
+  loadingState: function() {
+    Audio.state = 1;
+    document.getElementById('loading-button-abc').innerHTML = Consts.loading
+    document.getElementById('loading-button-random').innerHTML = Consts.loading
+    document.getElementById('audio-button').innerHTML = ''
+  },
+
+  onClick: function(type) {
     if (Audio.state == 0) {
-      Audio.state = 1
-      document.getElementById('loading-button').innerHTML = Consts.loading
+      Audio.loadingState();
       document.getElementById('restore-block').innerHTML = "";
       VK.init(function() {
-        Audio.init(0);
+        Audio.init(0, type);
       });
-    }
-
-    if (Audio.state == 2) {
-      window.open("//vk.com/audio")
     }
   },
 
   onRestore: function() {
     document.getElementById('restore-block').innerHTML = Consts.restoring;
-    Audio.state = 1;
-    document.getElementById('loading-button').innerHTML = Consts.loading
+    Audio.loadingState();
     Audio.restore(0);
   }
 }
