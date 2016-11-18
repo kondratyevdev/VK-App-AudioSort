@@ -11,23 +11,31 @@ var Audio = {
 
   startBefore: 0,
   state: 0,
+
   init: function(offset, type) {
     VK.api('audio.get', {
       count: 100,
       offset: offset * 100
     }, function(r) {
       var response = r.response;
-      if (response.length == 0) {
+      var count = response.count;
+      var items = response.items;
+
+      if (items.length == 0) {
         if (type == 'random') {
           Audio.randomSort();
         } else {
           Audio.sort();
         }
       } else {
-        for (var i in response) {
-          var audio = response[i];
+        console.log(items)
+        for (var i in items) {
+          var audio = items[i];
+
+          console.log(audio)
+
           if (Audio.startBefore == 0)
-            Audio.startBefore = audio.aid;
+            Audio.startBefore = audio.id;
 
           var key = audio.artist.trim().toLowerCase();
           if (!Audio.data[key])
@@ -67,6 +75,7 @@ var Audio = {
       sorted_array = sorted_array.concat(arr);
     }
 
+
     Audio.reorder(sorted_array, 0, function() {
       Audio.defaultState();
       document.getElementById('restore-block').innerHTML = Consts.restore
@@ -80,11 +89,14 @@ var Audio = {
       offset: offset * 100
     }, function(r) {
       var response = r.response;
-      if (response.length == 0) {
+      var count = response.count;
+      var items = response.items;
+
+      if (items.length == 0) {
         Audio.sortById();
       } else {
-        for (var i in response) {
-          var audio = response[i];
+        for (var i in items) {
+          var audio = items[i];
           Audio.unsorted.push(audio);
         }
         setTimeout(function() {
@@ -120,7 +132,7 @@ var Audio = {
 
   sortById: function() {
     Audio.unsorted.sort(function(a, b) {
-      return b.aid - a.aid;
+      return b.id - a.id;
     });
 
     Audio.reorder(Audio.unsorted, 0, function(){
@@ -137,10 +149,10 @@ var Audio = {
     }
 
     var execute_list = [];
-    var after = list[0].aid;
+    var after = list[0].id;
 
     if(offset !== undefined && offset != 0) {
-      after = list[offset - 1].aid;
+      after = list[offset - 1].id;
     } else {
       offset = 0
     }
@@ -148,10 +160,10 @@ var Audio = {
     var chunk = list.slice(offset, offset + 25);
 
     for(var i = 0; i < chunk.length; i++) {
-      execute_list.push(chunk[i].aid);
+      execute_list.push(chunk[i].id);
     }
 
-    var code = 'var arr = [' + execute_list.join(",") + ']; var after = ' + after + '; var i = 0; while(i < arr.length) { API.audio.reorder({aid:arr[i], after: after}); after = arr[i]; i = i + 1; } return 1;';
+    var code = 'var arr = [' + execute_list.join(",") + ']; var after = ' + after + '; var i = 0; while(i < arr.length) { API.audio.reorder({audio_id: arr[i], after: after}); after = arr[i]; i = i + 1; } return 1;';
 
     VK.api('execute', {
       code: code
